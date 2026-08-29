@@ -1,0 +1,133 @@
+import { useCallback, useEffect, useRef, useState } from 'react'
+
+const INTRO_SRC = '/video/intro.mp4'
+const RETRIGGER_PX = 60
+
+export default function VideoIntro() {
+  const video = useRef(null)
+  const skip = useRef(null)
+  const [show, setShow] = useState(false)
+  const lock = useRef(false)
+  const armed = useRef(true)
+  const done = useRef(false)
+  const reduce = useRef(false)
+  const restoreFocus = useRef(null)
+
+  const finish = useCallback(() => {
+    lock.current = false
+    armed.current = false
+    done.current = true
+    document.body.classList.add('intro-done')
+    const v = video.current
+    if (v) v.pause()
+    const active = document.activeElement
+    setShow(false)
+    if (restoreFocus.current && restoreFocus.current !== active) {
+      restoreFocus.current.focus?.()
+    }
+    restoreFocus.current = null
+  }, [])
+
+  const start = useCallback((focusSkip) => {
+    if (reduce.current || lock.current) return
+    lock.current = true
+    restoreFocus.current = document.activeElement
+    setShow(true)
+    if (focusSkip) {
+      requestAnimationFrame(() => skip.current?.focus())
+    }
+  }, [])
+
+  useEffect(() => {
+    const media = window.matchMedia('(prefers-reduced-motion: reduce)')
+    reduce.current = media.matches
+
+    const raf = requestAnimationFrame(() => {
+      if (reduce.current) {
+        document.body.classList.add('intro-done')
+        return
+      }
+      start(true)
+    })
+
+    const onScroll = () => {
+      if (reduce.current) return
+      if (window.scrollY > RETRIGGER_PX) {
+        armed.current = true
+        return
+      }
+      if (armed.current && done.current) {
+        armed.current = false
+        start(false)
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+
+    return () => {
+      cancelAnimationFrame(raf)
+      window.removeEventListener('scroll', onScroll)
+    }
+  }, [start])
+
+  useEffect(() => {
+    document.body.classList.toggle('no-scroll', show)
+    document.documentElement.classList.toggle('no-scroll', show)
+    return () => {
+      document.body.classList.remove('no-scroll')
+      document.documentElement.classList.remove('no-scroll')
+    }
+  }, [show])
+
+  useEffect(() => {
+    if (!show) return
+    const v = video.current
+    if (!v) return
+    v.currentTime = 0
+    v.play()?.catch(() => {})
+  }, [show])
+
+  useEffect(() => {
+    if (!show) return
+    const onDoc = (e) => {
+      if (e.target.closest('.nav, .menu-dialog, .intro-frame')) {
+        finish()
+      }
+    }
+    document.addEventListener('click', onDoc, true)
+    return () => document.removeEventListener('click', onDoc, true)
+  }, [show, finish])
+
+  return (
+    <div className={`intro${show ? ' intro-show' : ''}`} aria-hidden={!show}>
+      <div className="intro-frame">
+        <video
+          ref={video}
+          className="intro-video"
+          src={INTRO_SRC}
+          muted
+          playsInline
+          preload="auto"
+          tabIndex={-1}
+          onEnded={finish}
+        />
+        <div className="intro-corner" aria-hidden="true">
+          <span className="intro-topline">Sultaniyeh · Lebanon</span>
+          <span className="intro-topline">N 33° 16' — E 35° 11'</span>
+        </div>
+        <div className="intro-bottom" aria-hidden="true">
+          <span className="intro-cap">Brand film 01</span>
+          <span className="intro-cap">Est. for the night</span>
+        </div>
+      </div>
+      <button
+        ref={skip}
+        type="button"
+        className="btn btn-ghost btn-sm intro-skip"
+        tabIndex={show ? 0 : -1}
+        onClick={finish}
+      >
+        Skip film
+      </button>
+    </div>
+  )
+}

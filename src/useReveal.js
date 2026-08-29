@@ -8,6 +8,13 @@ export function useReveal() {
     window.scrollTo(0, 0)
 
     const els = document.querySelectorAll('.reveal')
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    if (reduce) {
+      els.forEach((el) => el.classList.add('in'))
+      return
+    }
+
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
@@ -17,7 +24,7 @@ export function useReveal() {
           }
         })
       },
-      { threshold: 0.12 }
+      { threshold: 0.12, rootMargin: '0px 0px -6% 0px' }
     )
     els.forEach((el) => io.observe(el))
     return () => io.disconnect()
