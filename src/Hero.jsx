@@ -1,4 +1,4 @@
-import { BRAND, HERO_IMAGE } from './data/menuData'
+import { HERO_IMAGE } from './data/menuData'
 
 export default function Hero() {
   return (
@@ -15,9 +15,6 @@ export default function Hero() {
           </h1>
           <div className="hero-actions">
             <a href="#menu" className="btn btn-primary">View The Menu</a>
-            <a href={`tel:${BRAND.phoneTel}`} className="btn btn-ghost">
-              Call {BRAND.phone}
-            </a>
           </div>
         </div>
       </div>

@@ -1,11 +1,17 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { BRAND } from './data/menuData'
+import { useCart } from './CartContext'
+
+const CartIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M6 7h12l1.2 13a1 1 0 0 1-1 1.1H5.8a1 1 0 0 1-1-1.1L6 7z" />
+    <path d="M9 10V6a3 3 0 0 1 6 0v4" />
+  </svg>
+)
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false)
-  const [open, setOpen] = useState(false)
-  const dialog = useRef(null)
-  const burger = useRef(null)
+  const { count, setOpen: openCart } = useCart()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
@@ -13,68 +19,30 @@ export default function Nav() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  const links = [
-    ['01', 'Menu', '#menu'],
-    ['02', 'Signature', '#featured'],
-    ['03', 'Visit', '#contact'],
-  ]
-
-  const openMenu = () => {
-    setOpen(true)
-    dialog.current?.showModal()
-  }
-  const closeMenu = () => dialog.current?.close()
-
   return (
-    <>
-      <nav className={`nav ${scrolled ? 'scrolled' : ''}`} aria-label="Primary">
-        <div className="container nav-inner">
-          <a href="#home" className="wordmark">
-            <img src={BRAND.logo} alt="" width="32" height="32" />
-            Food<span className="period">.</span>Stop
-          </a>
-          <ul className="nav-links">
-            <li><a href="#menu">Menu</a></li>
-            <li><a href="#featured">Signature</a></li>
-            <li><a href="#contact">Visit</a></li>
-          </ul>
-          <a href="#menu" className="btn btn-ghost btn-sm nav-cta">View Menu</a>
+    <nav className={`nav ${scrolled ? 'scrolled' : ''}`} aria-label="Primary">
+      <div className="container nav-inner">
+        <a href="#home" className="wordmark">
+          <img src={BRAND.logo} alt="" width="32" height="32" />
+          Food<span className="period">.</span>Stop
+        </a>
+        <ul className="nav-links">
+          <li><a href="#menu">Menu</a></li>
+          <li><a href="#featured">Signature</a></li>
+          <li><a href="#contact">Visit</a></li>
+        </ul>
+        <a href="#menu" className="btn btn-ghost btn-sm nav-cta">View Menu</a>
+        <div className="nav-actions">
           <button
-            ref={burger}
-            className="nav-burger"
-            aria-label="Open menu"
-            aria-expanded={open}
-            onClick={open ? closeMenu : openMenu}
+            className="nav-cart"
+            aria-label={`Open cart${count ? `, ${count} item${count === 1 ? '' : 's'}` : ''}`}
+            onClick={() => openCart(true)}
           >
-            <span />
-            <span />
-            <span />
+            <CartIcon />
+            {count > 0 && <span className="badge">{count}</span>}
           </button>
         </div>
-      </nav>
-
-      <dialog
-        ref={dialog}
-        className="menu-dialog"
-        aria-label="Site menu"
-        onClose={() => {
-          setOpen(false)
-          burger.current?.focus()
-        }}
-      >
-        <nav aria-label="Mobile">
-          {links.map(([no, label, href]) => (
-            <a key={href} href={href} onClick={closeMenu}>
-              <span>{label}</span>
-              <span className="d-number">{no}</span>
-            </a>
-          ))}
-        </nav>
-        <div className="d-foot">
-          <p className="d-cap">Sultaniyeh, Lebanon — dine in · takeaway · hookah</p>
-          <a href={`tel:${BRAND.phoneTel}`}>Call {BRAND.phone}</a>
-        </div>
-      </dialog>
-    </>
+      </div>
+    </nav>
   )
 }

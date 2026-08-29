@@ -1,9 +1,11 @@
 import { useState, useRef, useEffect } from 'react'
 import { MENU_SECTIONS, MENU_ITEMS } from './data/menuData'
+import { useCart } from './CartContext'
 
 const fmt = (price, ll) => (ll ? `${Math.round(price).toLocaleString()} LL` : `$${price.toFixed(2)}`)
 
 function MenuItem({ item, i }) {
+  const { addItem } = useCart()
   return (
     <article className={`menu-row ${item.pic ? 'has-img' : ''}`} style={{ '--i': i }}>
       {item.pic && (
@@ -19,6 +21,15 @@ function MenuItem({ item, i }) {
           </h3>
           <span className="leader" aria-hidden="true" />
           <span className={`price ${item.ll ? 'll' : ''}`}>{fmt(item.price, item.ll)}</span>
+          <button
+            type="button"
+            className="add"
+            onClick={() => addItem(item)}
+            aria-label={`Add ${item.name} to order`}
+            title={`Add ${item.name}`}
+          >
+            +
+          </button>
         </div>
         {item.sub && <p className="sub">{item.sub}</p>}
       </div>

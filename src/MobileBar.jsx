@@ -1,4 +1,4 @@
-import { BRAND } from './data/menuData'
+import { useCart } from './CartContext'
 
 const MenuIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
@@ -6,23 +6,27 @@ const MenuIcon = () => (
   </svg>
 )
 
-const PhoneIcon = () => (
+const CartIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.9a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.9.3 1.9.6 2.9.7a2 2 0 0 1 1.7 2z" />
+    <path d="M6 7h12l1.2 13a1 1 0 0 1-1 1.1H5.8a1 1 0 0 1-1-1.1L6 7z" />
+    <path d="M9 10V6a3 3 0 0 1 6 0v4" />
   </svg>
 )
 
 export default function MobileBar() {
+  const { count, setOpen } = useCart()
+
   return (
     <div className="mobile-bar" role="complementary" aria-label="Quick actions">
       <a href="#menu" className="mb-btn mb-primary">
         <MenuIcon />
         <span>View Menu</span>
       </a>
-      <a href={`tel:${BRAND.phoneTel}`} className="mb-btn mb-call">
-        <PhoneIcon />
-        <span>Call</span>
-      </a>
+      <button className="mb-btn mb-cart" onClick={() => setOpen(true)} aria-label={`Open cart${count ? `, ${count} item${count === 1 ? '' : 's'}` : ''}`}>
+        <CartIcon />
+        <span>Cart</span>
+        {count > 0 && <span className="badge">{count}</span>}
+      </button>
     </div>
   )
 }

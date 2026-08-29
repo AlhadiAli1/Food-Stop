@@ -85,7 +85,7 @@ export default function VideoIntro() {
   useEffect(() => {
     if (!show) return
     const onDoc = (e) => {
-      if (e.target.closest('.nav, .menu-dialog, .intro-frame')) {
+      if (e.target.closest('.nav, .intro-frame')) {
         finish()
       }
     }
@@ -137,8 +137,10 @@ export default function VideoIntro() {
           onEnded={finish}
         />
         <div className="intro-corner" aria-hidden="true">
-          <span className="intro-topline">Sultaniyeh · Lebanon</span>
-          <span className="intro-topline">N 33° 16' — E 35° 11'</span>
+          <span className="intro-tag">Good Food, Good Mood</span>
+          <span className="intro-venue">
+            <span className="intro-topline">Sultaniyeh · Lebanon</span>
+          </span>
         </div>
         <div className="intro-bottom" aria-hidden="true">
           <span className="intro-cap">Brand film 01</span>

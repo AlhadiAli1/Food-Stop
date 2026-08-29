@@ -54,7 +54,7 @@ export default function Contact() {
                 <div className="ci"><Phone /></div>
                 <div>
                   <small>Phone</small>
-                  <b><a href={`tel:${BRAND.phoneTel}`}>{BRAND.phone}</a></b>
+                  <b>{BRAND.phone}</b>
                 </div>
               </li>
               <li>

@@ -163,8 +163,8 @@ export const FEATURED = items.filter((i) => i.featured)
 export const BRAND = {
   name: 'Food Stop',
   location: 'Sultaniyeh, Sour (Tyre), Lebanon',
-  phone: '71 356 564',
-  phoneTel: '+96171356564',
+  phone: '71 919 234',
+  phoneTel: '+96171919234',
   instagram: 'https://www.instagram.com/food_stop_leb?igsh=N3FmNm5nbzVrZGQx',
   facebook: 'https://www.facebook.com/FoodStopresto/',
   logo: '/images/foodstop-logo.svg',

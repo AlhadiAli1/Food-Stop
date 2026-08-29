@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Netlify / Vercel
+.netlify/
+.vercel/
+
+# Local dev
+*.local
+START.bat
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+
+# Test / tooling artifacts
+.playwright-mcp/
+*.png

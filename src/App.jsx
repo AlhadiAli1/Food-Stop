@@ -8,6 +8,7 @@ import Menu from './Menu.jsx'
 import Contact from './Contact.jsx'
 import Footer from './Footer.jsx'
 import MobileBar from './MobileBar.jsx'
+import CartDialog from './CartDialog.jsx'
 
 export default function App() {
   useReveal()
@@ -26,6 +27,7 @@ export default function App() {
       </main>
       <Footer />
       <MobileBar />
+      <CartDialog />
     </div>
   )
 }
