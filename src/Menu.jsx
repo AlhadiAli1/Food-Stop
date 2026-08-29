@@ -69,6 +69,24 @@ export default function Menu() {
   const section = MENU_SECTIONS[activeIndex]
   const items = MENU_ITEMS.filter((i) => i.group === active)
   const barRef = useRef(null)
+  const touch = useRef(null)
+
+  const onTouchStart = (e) => {
+    const t = e.touches[0]
+    touch.current = { x: t.clientX, y: t.clientY }
+  }
+
+  const onTouchEnd = (e) => {
+    if (!touch.current) return
+    const t = e.changedTouches[0]
+    const dx = t.clientX - touch.current.x
+    const dy = t.clientY - touch.current.y
+    touch.current = null
+    if (Math.abs(dx) < 48 || Math.abs(dy) > Math.abs(dx) * 1.25) return
+    const nextIdx =
+      (activeIndex + (dx < 0 ? 1 : -1) + MENU_SECTIONS.length) % MENU_SECTIONS.length
+    setActive(MENU_SECTIONS[nextIdx].label)
+  }
 
   useEffect(() => {
     const el = barRef.current
@@ -91,7 +109,11 @@ export default function Menu() {
       </div>
 
       <div className="container">
-        <div className="menu-panel">
+        <div
+          className="menu-panel"
+          onTouchStart={onTouchStart}
+          onTouchEnd={onTouchEnd}
+        >
           <div className="menu-head">
             <h3>{section.label}</h3>
             <span className="count">{items.length} {items.length === 1 ? 'item' : 'items'}</span>
@@ -122,6 +144,7 @@ export default function Menu() {
             <b>Note:</b> Enjoy our selection of argileh flavours with your order.
           </p>
         )}
+        
       </div>
     </section>
   )

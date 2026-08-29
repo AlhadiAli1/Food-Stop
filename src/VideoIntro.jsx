@@ -5,7 +5,6 @@ const RETRIGGER_PX = 60
 
 export default function VideoIntro() {
   const video = useRef(null)
-  const skip = useRef(null)
   const [show, setShow] = useState(false)
   const lock = useRef(false)
   const armed = useRef(true)
@@ -28,14 +27,11 @@ export default function VideoIntro() {
     restoreFocus.current = null
   }, [])
 
-  const start = useCallback((focusSkip) => {
+  const start = useCallback(() => {
     if (reduce.current || lock.current) return
     lock.current = true
     restoreFocus.current = document.activeElement
     setShow(true)
-    if (focusSkip) {
-      requestAnimationFrame(() => skip.current?.focus())
-    }
   }, [])
 
   useEffect(() => {
@@ -47,7 +43,7 @@ export default function VideoIntro() {
         document.body.classList.add('intro-done')
         return
       }
-      start(true)
+      start()
     })
 
     const onScroll = () => {
@@ -97,6 +93,36 @@ export default function VideoIntro() {
     return () => document.removeEventListener('click', onDoc, true)
   }, [show, finish])
 
+  useEffect(() => {
+    if (!show) return
+    let touchY = null
+    const onWheel = (e) => {
+      if (e.deltaY > 0) finish()
+    }
+    const onTouchStart = (e) => {
+      touchY = e.touches[0]?.clientY ?? null
+    }
+    const onTouchEnd = (e) => {
+      if (touchY == null) return
+      const dy = touchY - (e.changedTouches[0]?.clientY ?? touchY)
+      touchY = null
+      if (dy > 30) finish()
+    }
+    const onKey = (e) => {
+      if (e.key === 'Escape') finish()
+    }
+    window.addEventListener('wheel', onWheel, { passive: true })
+    window.addEventListener('touchstart', onTouchStart, { passive: true })
+    window.addEventListener('touchend', onTouchEnd, { passive: true })
+    window.addEventListener('keydown', onKey)
+    return () => {
+      window.removeEventListener('wheel', onWheel)
+      window.removeEventListener('touchstart', onTouchStart)
+      window.removeEventListener('touchend', onTouchEnd)
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [show, finish])
+
   return (
     <div className={`intro${show ? ' intro-show' : ''}`} aria-hidden={!show}>
       <div className="intro-frame">
@@ -119,15 +145,6 @@ export default function VideoIntro() {
           <span className="intro-cap">Est. for the night</span>
         </div>
       </div>
-      <button
-        ref={skip}
-        type="button"
-        className="btn btn-ghost btn-sm intro-skip"
-        tabIndex={show ? 0 : -1}
-        onClick={finish}
-      >
-        Skip film
-      </button>
     </div>
   )
 }
