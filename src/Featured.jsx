@@ -14,9 +14,9 @@ export default function Featured() {
           <h2>Order like a <em>regular</em></h2>
         </div>
       </div>
-      <div className="carousel reveal" aria-label="Signature dishes">
+      <div className="carousel" aria-label="Signature dishes">
         {FEATURED.map((f, i) => (
-          <article className="feature-card" key={f.name}>
+          <article className="feature-card reveal-card" key={f.name}>
             <a href="#menu" className="fc-link" aria-label={`${f.name} — see the full menu`}>
               <div className="cd">
                 <img src={f.pic} alt="" width="600" height="750" loading="lazy" />
@@ -43,7 +43,7 @@ export default function Featured() {
             </div>
           </article>
         ))}
-        <a href="#menu" className="feature-cta" aria-label="Browse the full menu">
+        <a href="#menu" className="feature-cta reveal-card" aria-label="Browse the full menu">
           <span>Browse the<br />full menu →</span>
         </a>
       </div>

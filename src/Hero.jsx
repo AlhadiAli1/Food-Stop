@@ -7,6 +7,7 @@ export default function Hero() {
         <img className="bg-img" src={HERO_IMAGE} alt="" fetchpriority="high" />
       </div>
       <div className="hero-scrim" aria-hidden="true" />
+      <div className="hero-shade" aria-hidden="true" />
       <div className="container">
         <div className="hero-content">
           <span className="eyebrow">Sultaniyeh, Lebanon — after dark</span>

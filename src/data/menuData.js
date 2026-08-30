@@ -170,6 +170,6 @@ export const BRAND = {
   logo: '/images/foodstop-logo.svg',
 }
 
-export const HERO_IMAGE = L('burgers')
+export const HERO_IMAGE = L('hero')
 export const SHAWARMA_IMAGE = L('shawarma-wrap')
 export const COMBO_IMAGE = L('food-bowl')

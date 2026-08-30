@@ -106,6 +106,41 @@ export default function Menu() {
     if (btn) btn.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' })
   }, [active])
 
+  useEffect(() => {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const rows = Array.from(document.querySelectorAll('.menu-panel .menu-row'))
+    if (reduce || !rows.length) {
+      rows.forEach((r) => r.classList.add('in'))
+      return
+    }
+    const ENTRY = 150
+    let raf = 0
+    const clamp = (v) => Math.max(0, Math.min(1, v))
+    const eased = (p) => 1 - Math.pow(1 - p, 2)
+    const paint = () => {
+      const vh = window.innerHeight
+      rows.forEach((el) => {
+        const r = el.getBoundingClientRect()
+        const p = clamp((vh - r.bottom) / ENTRY)
+        const k = eased(p)
+        el.style.opacity = String(k.toFixed(3))
+        el.style.transform = `translateX(${(1 - k) * -32}px)`
+      })
+    }
+    const schedule = () => {
+      cancelAnimationFrame(raf)
+      raf = requestAnimationFrame(paint)
+    }
+    paint()
+    window.addEventListener('scroll', schedule, { passive: true })
+    window.addEventListener('resize', schedule)
+    return () => {
+      cancelAnimationFrame(raf)
+      window.removeEventListener('scroll', schedule)
+      window.removeEventListener('resize', schedule)
+    }
+  }, [active])
+
   return (
     <section className="section menu" id="menu">
       <div className="container">

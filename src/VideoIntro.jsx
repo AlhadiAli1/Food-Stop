@@ -6,6 +6,7 @@ const RETRIGGER_PX = 60
 export default function VideoIntro() {
   const video = useRef(null)
   const [show, setShow] = useState(false)
+  const [progress, setProgress] = useState(0)
   const lock = useRef(false)
   const armed = useRef(true)
   const done = useRef(false)
@@ -31,6 +32,7 @@ export default function VideoIntro() {
     if (reduce.current || lock.current) return
     lock.current = true
     restoreFocus.current = document.activeElement
+    setProgress(0)
     setShow(true)
   }, [])
 
@@ -78,9 +80,17 @@ export default function VideoIntro() {
     if (!show) return
     const v = video.current
     if (!v) return
+    const onTime = () => {
+      if (v.duration) setProgress(v.currentTime / v.duration)
+    }
     v.currentTime = 0
     v.play()?.catch(() => {})
+    v.addEventListener('timeupdate', onTime)
+    return () => v.removeEventListener('timeupdate', onTime)
   }, [show])
+
+  // Progress thresholds that reveal each text line as the film advances.
+  const on = (t) => progress >= t
 
   useEffect(() => {
     if (!show) return
@@ -136,15 +146,17 @@ export default function VideoIntro() {
           tabIndex={-1}
           onEnded={finish}
         />
-        <div className="intro-corner" aria-hidden="true">
-          <span className="intro-tag">Good Food, Good Mood</span>
-          <span className="intro-venue">
-            <span className="intro-topline">Sultaniyeh · Lebanon</span>
+        <div className="intro-shade" aria-hidden="true" />
+        <div className="intro-brand" aria-hidden="true">
+          <span className="intro-brand-text">
+            <span className={`intro-brand-word intro-brand-food${on(0.14) ? ' on' : ''}`}>
+              Food
+              <span className="intro-dots" aria-hidden="true">…</span>
+            </span>
+            <span className={`intro-brand-word intro-brand-stop${on(0.34) ? ' on' : ''}`}>
+              Stop
+            </span>
           </span>
-        </div>
-        <div className="intro-bottom" aria-hidden="true">
-          <span className="intro-cap">Brand film 01</span>
-          <span className="intro-cap">Est. for the night</span>
         </div>
       </div>
     </div>
